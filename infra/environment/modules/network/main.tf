@@ -17,18 +17,6 @@ resource "google_compute_subnetwork" "management" {
   network       = google_compute_network.custom_vpc.id
 }
 
-output "vpc_id" {
-  value = google_compute_network.custom_vpc.id
-}
-
 output "vpc_name" {
   value = google_compute_network.custom_vpc.name
-}
-
-output "restricted_subnet_id" {
-  value = google_compute_subnetwork.restricted.id
-}
-
-output "management_subnet_id" {
-  value = google_compute_subnetwork.management.id
 }

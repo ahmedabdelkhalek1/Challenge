@@ -27,7 +27,3 @@ resource "google_container_node_pool" "default_pool" {
     oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 }
-
-output "cluster_name" {
-  value = google_container_cluster.private_gke.name
-}
