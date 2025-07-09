@@ -1,0 +1,19 @@
+replicaCount: 2
+
+image:
+  repository: us-east1-docker.pkg.dev/artful-fragment-458014-j4/demo-app/demo-app
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 80
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+
+redis:
+  host: demo-redis
+  port: 6379
