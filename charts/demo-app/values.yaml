@@ -68,3 +68,8 @@ monitoring:
     enabled: true
     labels:
       app: demo-app
+
+app:
+  environment: "production"
+  host: "0.0.0.0"
+  port: 8080
