@@ -23,7 +23,7 @@ resource "google_container_node_pool" "default_pool" {
 
   node_config {
     machine_type = var.machine_type
-    disk_type = "pd-standard"
+    disk_type    = "pd-standard"
     disk_size_gb = 15
     tags         = ["gke-nodes"]
     oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
