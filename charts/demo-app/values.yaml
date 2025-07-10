@@ -2,7 +2,7 @@
 replicaCount: 3
 
 image:
-  repository: gcr.io/YOUR_PROJECT_ID/devops-challenge-app
+  repository: us-east1-docker.pkg.dev/artful-fragment-458014-j4/demo-app
   pullPolicy: IfNotPresent
   tag: "latest"
 
