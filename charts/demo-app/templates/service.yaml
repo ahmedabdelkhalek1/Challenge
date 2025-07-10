@@ -1,16 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "demo-app.fullname" . }}
+  name: {{ .Chart.Name }}
   labels:
-{{- include "demo-app.labels" . | nindent 4 }}
+    app: {{ .Chart.Name }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: 8080
-      protocol: TCP
-      name: http
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+    protocol: TCP
+    name: http
   selector:
-    app.kubernetes.io/name: {{ include "demo-app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app: {{ .Chart.Name }}

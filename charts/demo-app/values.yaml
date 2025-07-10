@@ -1,75 +1,57 @@
-replicaCount: 3
+replicaCount: 2
 
 image:
-  repository: us-east1-docker.pkg.dev/artful-fragment-458014-j4/demo-app
-  pullPolicy: IfNotPresent
-  tag: "latest"
+  repository: us-east1-docker.pkg.dev/artful-fragment-458014-j4/demo-app/demo-app
+  tag: latest
+  pullPolicy: Always
 
 service:
   type: ClusterIP
   port: 80
+  targetPort: 8080
 
 ingress:
   enabled: true
   annotations:
-    kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.global-static-ip-name: "demo-app-ip"
-    networking.gke.io/managed-certificates: "demo-app-ssl"
-    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.global-static-ip-name: demo-app-ip
   hosts:
-    - host: your-domain.com
+    - host: ""
       paths:
         - path: /
           pathType: Prefix
-  tls: []
 
 resources:
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: "500m"
+    memory: "512Mi"
   requests:
-    cpu: 250m
-    memory: 256Mi
+    cpu: "200m"
+    memory: "256Mi"
 
-autoscaling:
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 15
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+secret:
   enabled: true
-  minReplicas: 3
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 70
-
-healthCheck:
-  readinessProbe:
-    httpGet:
-      path: /health
-      port: 8080
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 3
-  livenessProbe:
-    httpGet:
-      path: /health
-      port: 8080
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 3
+  secretName: demo-app-secrets
+  gcpSecretManager:
+    secrets:
+      - secretId: demo-app-secret
+        key: APP_SECRET
 
 redis:
   enabled: true
-  image:
-    repository: bitnami/redis
-    tag: 7.0.11
-  password: "your-redis-password"
-
-monitoring:
-  enabled: true
-  serviceMonitor:
-    enabled: false
-    labels:
-      app: demo-app
-
-app:
-  environment: "production"
-  host: "0.0.0.0"
-  port: 8080
+  host: "10.170.201.60"
+  port: 6379

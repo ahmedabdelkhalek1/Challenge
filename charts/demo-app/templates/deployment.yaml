@@ -1,50 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "demo-app.fullname" . }}
+  name: {{ .Values.deploymentName | default .Chart.Name }}
   labels:
-    {{- include "demo-app.labels" . | nindent 4 }}
+    app: {{ .Chart.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "demo-app.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app: {{ .Chart.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "demo-app.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        app: {{ .Chart.Name }}
     spec:
       containers:
-        - name: app
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: {{ .Values.healthCheck.readinessProbe.httpGet.path }}
-              port: {{ .Values.healthCheck.readinessProbe.httpGet.port }}
-            initialDelaySeconds: {{ .Values.healthCheck.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.healthCheck.readinessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.healthCheck.readinessProbe.timeoutSeconds }}
-            failureThreshold: {{ .Values.healthCheck.readinessProbe.failureThreshold }}
-          livenessProbe:
-            httpGet:
-              path: {{ .Values.healthCheck.livenessProbe.httpGet.path }}
-              port: {{ .Values.healthCheck.livenessProbe.httpGet.port }}
-            initialDelaySeconds: {{ .Values.healthCheck.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.healthCheck.livenessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.healthCheck.livenessProbe.timeoutSeconds }}
-            failureThreshold: {{ .Values.healthCheck.livenessProbe.failureThreshold }}
-        - name: redis
-          image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
-          env:
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "demo-app.fullname" . }}-secret
-                  key: redis-password
-          ports:
-            - containerPort: 6379
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.targetPort }}
+        env:
+        {{- if .Values.secret.enabled }}
+        - name: APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secret.secretName }}
+              key: APP_SECRET
+        {{- end }}
+        {{- if .Values.redis.enabled }}
+        - name: REDIS_HOST
+          value: {{ .Values.redis.host | quote }}
+        - name: REDIS_PORT
+          value: {{ .Values.redis.port | quote }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        livenessProbe:
+          {{- toYaml .Values.livenessProbe | nindent 12 }}
+        readinessProbe:
+          {{- toYaml .Values.readinessProbe | nindent 12 }}
