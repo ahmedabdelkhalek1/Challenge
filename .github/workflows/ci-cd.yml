@@ -138,7 +138,7 @@ jobs:
   
       - name: Run tests
         run: |
-          python DevOps-Challenge-Demo-Code-master/tests/test.py
+          python DevOps-Challenge-Demo-Code/tests/test.py
 
       # - name: Google Auth
       #   uses: google-github-actions/auth@v2
