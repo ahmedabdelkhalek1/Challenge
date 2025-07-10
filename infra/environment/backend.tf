@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "artful-fragment-458014-j4-tf-state"
+    bucket = "devops-challenge-tf"
     prefix = "devops-challenge-tf"
   }
 }
