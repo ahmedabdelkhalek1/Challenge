@@ -232,7 +232,7 @@ jobs:
             --wait
 
       - name: Deploy application with Helm
-        working-directory: charts/demo-app
+        # Remove working-directory to run from repo root
         run: |
           helm upgrade --install ${{ env.DEPLOYMENT_NAME }}  ./charts/demo-app \
             --namespace production \
