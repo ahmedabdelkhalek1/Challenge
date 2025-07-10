@@ -14,6 +14,8 @@ env:
   WORKING_DIR: infra/environment
   CLUSTER_NAME: private-gke-cluster
   CLUSTER_LOCATION : us-east1
+  REPOSITORY: demo-app
+  IMAGE: demo-app
 
 
 permissions:
@@ -135,11 +137,56 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r DevOps-Challenge-Demo-Code/requirements.txt
   
-  
       - name: Run tests
         run: |
           python DevOps-Challenge-Demo-Code/tests/test.py
 
+  build-and-push:
+      needs: test-apps
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/main'
+      outputs:
+        image-tag: ${{ steps.build.outputs.image-tag }}
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+  
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+  
+      - name: Google Auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id:                ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account:            ${{ env.SERVICE_ACCOUNT }}
+  
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+  
+      - name: Configure Docker to use gcloud as a credential helper
+        run: |
+          gcloud auth configure-docker ${{ env.CLUSTER_LOCATION }}-docker.pkg.dev
+  
+      - name: Create Artifact Registry repository if it doesn't exist
+        run: |
+          gcloud artifacts repositories create ${{ env.REPOSITORY }} \
+            --repository-format=docker \
+            --location=${{ env.CLUSTER_LOCATION }} \
+            --description="Docker repository for DevOps Challenge" || true
+  
+      - name: Build and push Docker image
+        id: build
+        working-directory: DevOps-Challenge-Demo-Code
+        run: |
+          IMAGE_TAG=${{ env.CLUSTER_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${GITHUB_SHA}
+          IMAGE_TAG_LATEST=${{ env.CLUSTER_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:latest
+          
+          docker build -t $IMAGE_TAG -t $IMAGE_TAG_LATEST .
+          docker push $IMAGE_TAG
+          docker push $IMAGE_TAG_LATEST
+          
+          echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
       # - name: Google Auth
       #   uses: google-github-actions/auth@v2
       #   with:
