@@ -1,6 +1,6 @@
 {{- define "demo-app.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
+{{- end }}
 
 {{- define "demo-app.fullname" -}}
 {{- if .Values.fullnameOverride -}}
@@ -8,11 +8,11 @@
 {{- else -}}
 {{- printf "%s-%s" .Release.Name (include "demo-app.name" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
-{{- end -}}
+{{- end }}
 
 {{- define "demo-app.labels" -}}
-app.kubernetes.io/name: {{ include "demo-app.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/version: {{ .Chart.AppVersion }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end -}}
+app.kubernetes.io/name: "{{ include "demo-app.name" . }}"
+app.kubernetes.io/instance: "{{ .Release.Name }}"
+app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+{{- end }}
