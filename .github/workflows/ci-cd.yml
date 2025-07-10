@@ -16,7 +16,7 @@ env:
   CLUSTER_LOCATION : us-east1
   REPOSITORY: demo-app
   IMAGE: demo-app
-
+  DEPLOYMENT_NAME: devops-challenge-demo
 
 permissions:
   contents: read
@@ -233,9 +233,9 @@ jobs:
 
       - name: Deploy application with Helm
         run: |
-          helm upgrade --install $DEPLOYMENT_NAME ./helm-chart \
+          helm upgrade --install ${{ env.DEPLOYMENT_NAME }}  ./helm-chart \
             --namespace production \
-            --set image.repository=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE \
+            --set image.repository=${{ env.CLUSTER_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }} \
             --set image.tag=$GITHUB_SHA \
             --set redis.host=redis-master \
             --wait
