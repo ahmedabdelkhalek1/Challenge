@@ -5,13 +5,12 @@ resource "google_compute_instance" "bastion" {
 
   boot_disk {
     initialize_params {
-      image = "ubuntu-os-cloud/ubuntu-2004-lts"
+      image = "projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20250111"
     }
   }
 
   network_interface {
     subnetwork = var.subnet_id
-    access_config {}
   }
 
   tags = ["bastion"]

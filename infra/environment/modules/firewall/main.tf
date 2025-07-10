@@ -7,7 +7,7 @@ resource "google_compute_firewall" "allow_ssh_bastion" {
     ports    = ["22"]
   }
 
-  source_ranges = ["X.X.X.X/32"]
+  source_ranges = ["35.235.240.0/20"] # IAP range
   target_tags   = ["bastion"]
 }
 
