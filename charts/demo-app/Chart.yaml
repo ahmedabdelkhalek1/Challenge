@@ -1,4 +1,6 @@
 apiVersion: v2
-name: demo-app
+name: devops-challenge-app
+description: A Helm chart for DevOps Challenge Demo Application
+type: application
 version: 0.1.0
-appVersion: "1.0"
+appVersion: "1.0.0"
