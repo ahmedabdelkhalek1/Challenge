@@ -4,43 +4,173 @@ on:
   push:
     branches: [ main ]
 
+  workflow_dispatch:
+
 env:
   PROJECT_ID: artful-fragment-458014-j4
   REGION: us-east1
-  WORKLOAD_IDENTITY_PROVIDER: projects/447195453845/locations/global/workloadIdentityPools/github-actions-pool/providers/github-gke-terraform
+  WORKLOAD_IDENTITY_PROVIDER: projects/447195453845/locations/global/workloadIdentityPools/github-actions-pool/providers/devoteam-challenge
   SERVICE_ACCOUNT: gke-terraform-service-account@artful-fragment-458014-j4.iam.gserviceaccount.com
   WORKING_DIR: infra/environment
 
+
 jobs:
-  build:
+  authenticate:
+    name: GCP Authentication
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: read
+      id-token: write
+    outputs:
+      auth_status: ${{ steps.auth.outputs.auth_status || 'success' }}
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v1
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v2'
         with:
+          project_id:                ${{ env.PROJECT_ID }}
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ env.SERVICE_ACCOUNT }}
+          service_account:            ${{ env.SERVICE_ACCOUNT }}
 
+  terraform-checks:
+    name: Terraform Init & Validation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    needs: authenticate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-
-      - name: Terraform Init & Apply
-        working-directory: ${{ env.WORKING_DIR }}
-        run: |
-          terraform init -backend-config="bucket=${{ env.PROJECT_ID }}-tf-state" -backend-config="prefix=devops-challenge"
-          terraform apply -auto-approve
-
-      - name: Get GKE Credentials
-        uses: google-github-actions/get-gke-credentials@v1
+        uses: hashicorp/setup-terraform@v3
         with:
-          cluster_name: private-gke-cluster
-          location: ${{ env.REGION }}
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          
+      - name: Google Auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id:                ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account:            ${{ env.SERVICE_ACCOUNT }}
+          
+      - name: Terraform Cleanup
+        run: rm -rf .terraform
+        
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: infra
+        
+      - name: Initialize Terraform
+        run: terraform init
+        working-directory: ${{ env.WORKING_DIR }}
+        
+      - name: Validate Terraform Configuration
+        run: terraform validate
+        working-directory: ${{ env.WORKING_DIR }}
+        
+      - name: Terraform Configuration Plan Report
+        run: terraform plan
+        working-directory: ${{ env.WORKING_DIR }}
 
+  deploy-infrastructure:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+    needs: terraform-checks
+    environment: production  # Add environment for approval
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          
+      - name: Google Auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id:                ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account:            ${{ env.SERVICE_ACCOUNT }}
+          
+      - name: Initialize Terraform
+        run: terraform init
+        working-directory: ${{ env.WORKING_DIR }}
+        
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ${{ env.WORKING_DIR }}
+        
+      - name: Confirm Infrastructure Deployment
+        run: |
+          echo "Infrastructure deployment completed successfully!"
+      
+        
+  test-apps:
+    name: Preview App Before Deployment
+    runs-on: ubuntu-latest
+    needs: deploy-infrastructure
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          project_id:                ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account:            ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Set up GKE credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          project_id:   ${{ env.PROJECT_ID }}
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location:     ${{ env.CLUSTER_LOCATION }}
+
+      - name: Dry-run apply (server-side)
+        run: |
+          kubectl apply \
+            --validate=false \
+            --dry-run=server \
+            -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+
+      - name: Show diff against live cluster
+        run: |
+          kubectl diff \
+            --server-side \
+            -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml || echo "Differences found, but continuing workflow"
+          
+          
+          
+  deploy-applications:
+    name: Deploy Applications
+    runs-on: ubuntu-latest
+    needs: test-apps
+    environment: production  # Add environment for approval
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+  
+      - name: Google Auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id:                ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account:            ${{ env.SERVICE_ACCOUNT }}
+  
+      - name: Set up GKE credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          project_id:   ${{ env.PROJECT_ID }}
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location:     ${{ env.CLUSTER_LOCATION }}
+          
       - name: Build & Push Docker Image
         run: |
           docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/demo-app/demo-app:latest .
@@ -49,3 +179,34 @@ jobs:
       - name: Helm Deploy
         run: |
           helm upgrade --install demo-app ./charts/demo-app --set image.repository=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/demo-app/demo-app
+      - name: Deploy Applications
+        run: |
+          kubectl apply --validate=false -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+      
+      - name: Get Load Balancer External IP
+        run: |
+          for i in {1..10}; do
+            IP=$(kubectl get svc --field-selector spec.type=LoadBalancer -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
+            if [[ -n "$IP" ]]; then
+              echo "External IP: $IP"
+              exit 0
+            fi
+            echo "Attempt $i: no IP yet, sleeping..."
+            sleep 15
+          done
+          echo "Timed out waiting for LoadBalancer IP" && exit 1
+      
+     
+  
+          
+  notification:
+    name: Failed pipeline notification
+    runs-on: ubuntu-latest
+    needs: [terraform-checks, test-apps, deploy-infrastructure, deploy-applications]
+    if: ${{ always() && (contains(join(needs.*.result, ','), 'failure') || contains(join(needs.*.result,','), 'cancelled')) }}
+    steps:
+      - name: Notify on Slack
+        run: echo "Sending  message about failed pipeline..."
+  
+
+
