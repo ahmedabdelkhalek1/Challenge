@@ -65,7 +65,7 @@ redis:
 monitoring:
   enabled: true
   serviceMonitor:
-    enabled: true
+    enabled: false
     labels:
       app: demo-app
 
