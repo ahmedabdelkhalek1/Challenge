@@ -1,4 +1,3 @@
-# Default values for devops-challenge-app
 replicaCount: 3
 
 image:
@@ -6,21 +5,16 @@ image:
   pullPolicy: IfNotPresent
   tag: "latest"
 
-nameOverride: ""
-fullnameOverride: ""
-
 service:
   type: ClusterIP
   port: 80
-  targetPort: 8080
 
 ingress:
   enabled: true
-  className: "gce"
   annotations:
     kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.global-static-ip-name: "devops-challenge-ip"
-    networking.gke.io/managed-certificates: "devops-challenge-ssl"
+    kubernetes.io/ingress.global-static-ip-name: "demo-app-ip"
+    networking.gke.io/managed-certificates: "demo-app-ssl"
     kubernetes.io/ingress.allow-http: "false"
   hosts:
     - host: your-domain.com
@@ -42,40 +36,35 @@ autoscaling:
   minReplicas: 3
   maxReplicas: 10
   targetCPUUtilizationPercentage: 70
-  targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
+healthCheck:
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
 
-tolerations: []
-
-affinity: {}
-
-# Application configuration
-app:
-  environment: "PROD"
-  host: "0.0.0.0"
-  port: 8080
-
-# Redis configuration
 redis:
-  host: "redis-service"
-  port: 6379
-  db: 0
+  enabled: true
+  image:
+    repository: bitnami/redis
+    tag: 7.0.11
   password: "your-redis-password"
 
-# Health check configuration
-healthCheck:
-  enabled: true
-  path: /health
-  initialDelaySeconds: 30
-  periodSeconds: 30
-  timeoutSeconds: 10
-  failureThreshold: 3
-
-# Monitoring
 monitoring:
   enabled: true
   serviceMonitor:
-    enabled: false
+    enabled: true
     labels:
-      app: devops-challenge-app
+      app: demo-app
