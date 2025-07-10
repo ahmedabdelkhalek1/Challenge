@@ -26,10 +26,10 @@ module "gke" {
 }
 
 module "bastion" {
-  source         = "./modules/bastion"
-  project        = var.project_id
-  subnet_id      = module.network.management_subnet_id
-  zone           = var.zone
+  source    = "./modules/bastion"
+  project   = var.project_id
+  subnet_id = module.network.management_subnet_id
+  zone      = var.zone
 }
 
 module "redis" {

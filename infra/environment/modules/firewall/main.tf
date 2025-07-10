@@ -17,7 +17,7 @@ resource "google_compute_firewall" "allow_bastion_to_gke" {
 
   allow {
     protocol = "tcp"
-    ports    = ["443","6443"]
+    ports    = ["443", "6443"]
   }
 
   source_tags = ["bastion"]
