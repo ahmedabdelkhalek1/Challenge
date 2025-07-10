@@ -133,7 +133,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r DevOps-Challenge-Demo-Code-master/requirements.txt
+          pip install -r DevOps-Challenge-Demo-Code/requirements.txt
+  
   
       - name: Run tests
         run: |
