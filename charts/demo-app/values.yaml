@@ -76,6 +76,6 @@ healthCheck:
 monitoring:
   enabled: true
   serviceMonitor:
-    enabled: true
+    enabled: false
     labels:
       app: devops-challenge-app
