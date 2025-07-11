@@ -19,7 +19,7 @@ spec:
             - containerPort: {{ .Values.service.targetPort }}
           env:
           - name: PORT
-            value: "8080"
+            value: "80"
           - name: REDIS_HOST
             value: {{ .Values.redis.host | default "\"10.170.201.60\"" }}
           - name: REDIS_PORT
