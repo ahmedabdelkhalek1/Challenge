@@ -217,7 +217,10 @@ jobs:
         uses: azure/setup-helm@v3
         with:
           version: '3.12.0'
-
+      - name: Create namespace if it doesn't exist
+        run: |
+          kubectl create namespace production --dry-run=client -o yaml | kubectl apply -f -
+  
 
       - name: Deploy application with Helm
         # Remove working-directory to run from repo root
