@@ -8,7 +8,7 @@ on:
 
 env:
   PROJECT_ID: artful-fragment-458014-j4
-  REGION: us-east1
+  REGION: us-central1
   WORKLOAD_IDENTITY_PROVIDER: projects/447195453845/locations/global/workloadIdentityPools/github-actions-pool/providers/devoteam-challenge
   SERVICE_ACCOUNT: gke-terraform-service-account@artful-fragment-458014-j4.iam.gserviceaccount.com
   WORKING_DIR: infra/environment
