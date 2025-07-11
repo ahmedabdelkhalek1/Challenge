@@ -18,12 +18,12 @@ resource "google_monitoring_alert_policy" "app_unavailable_alert" {
   conditions {
     display_name = "App Health Check Failed"
     condition_threshold {
-      filter          = "metric.type=\"compute.googleapis.com/instance/health\" resource.type=\"http_load_balancer\""
-      duration        = "60s"
-      comparison      = "COMPARISON_GT"
+      filter = "metric.type=\"loadbalancing.googleapis.com/https/backend_latencies\" resource.type=\"http_load_balancer\""
+      duration = "60s"
+      comparison = "COMPARISON_GT"
       threshold_value = 0
       aggregations {
-        alignment_period   = "60s"
+        alignment_period = "60s"
         per_series_aligner = "ALIGN_RATE"
       }
     }
