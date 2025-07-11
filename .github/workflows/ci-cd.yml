@@ -13,7 +13,7 @@ env:
   SERVICE_ACCOUNT: gke-terraform-service-account@artful-fragment-458014-j4.iam.gserviceaccount.com
   WORKING_DIR: infra/environment
   CLUSTER_NAME: private-cluster
-  CLUSTER_LOCATION : us-central1
+  CLUSTER_LOCATION : us-central1-a
   REPOSITORY: demo-app
   IMAGE: demo-app
   DEPLOYMENT_NAME: demo-app
