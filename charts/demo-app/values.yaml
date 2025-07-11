@@ -1,3 +1,4 @@
+# Default values for python-app
 replicaCount: 2
 
 image:
@@ -5,23 +6,75 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
-redis:
-  host: "10.9.151.28"
-  port: "6379"
-  db: "0"
-  
+nameOverride: ""
+fullnameOverride: ""
 
 service:
   type: ClusterIP
   port: 80
+  targetPort: 8080
 
+# Application configuration
+app:
+  port: 8080
+  host: "0.0.0.0"
+  environment: production
+
+# Redis configuration
+redis:
+  host: "10.9.151.28"
+  port: 6379
+  db: 0
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Health check configuration
+healthcheck:
+  liveness:
+    path: /
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readiness:
+    path: /
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+# Namespace
+namespace: "production"
+
+# Pod annotations
+podAnnotations: {}
+
+# Security context
+securityContext: {}
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}
+
+# Ingress configuration
 ingress:
   enabled: true
-  className: "nginx"
-  annotations: {}
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "python-app-ip"
+    ingress.gcp.kubernetes.io/load-balancer-type: "External"
   hosts:
-    - host: demo-app-devoteam.com
+    - host: ""
       paths:
-        - path: /
-          pathType: Prefix
+        - path: /*
+          pathType: ImplementationSpecific
   tls: []
