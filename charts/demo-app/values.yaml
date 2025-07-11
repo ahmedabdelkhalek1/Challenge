@@ -6,14 +6,13 @@ image:
   tag: "latest"
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 80
-  targetPort: 80
-  protocol: TCP
+  targetPort: 8080
 
 ingress:
   enabled: true
-  host: "your-domain.com"
+  host: "devops-demo.local"
   managedCertificate: ""
   tls:
     enabled: false
@@ -21,9 +20,16 @@ ingress:
 
 resources: {}
 
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
 livenessProbe:
   path: /
-  port: 80
+  port: 8080
   initialDelaySeconds: 10
   periodSeconds: 10
 
@@ -31,3 +37,8 @@ redis:
   enabled: true
   host: "10.170.201.60"   # ← Replace with actual Redis IP from GCP
   port: 6379
+
+app:
+  environment: "production"
+  host: "0.0.0.0"
+  port: 8080

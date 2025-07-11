@@ -4,8 +4,10 @@ metadata:
   name: {{ .Release.Name }}
 spec:
   type: {{ .Values.service.type }}
+  name: http
+  protocol: TCP
   selector:
     app: {{ .Release.Name }}
   ports:
     - port: 80
-      targetPort: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
