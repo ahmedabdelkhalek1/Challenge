@@ -6,31 +6,20 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      name: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        name: {{ .Release.Name }}
     spec:
       containers:
-        - name: demo-app
+        - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          ports:
-            - containerPort: {{ .Values.service.targetPort }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          - name: PORT
-            value: "8080"
-          - name: ENVIRONMENT
-            value: "production"
-          - name: REDIS_HOST
-            value: {{ .Values.redis.host | default "\"10.170.201.60\"" }}
-          - name: REDIS_PORT
-            value: {{ .Values.redis.port | default 6379 | quote }}   
-          - name: REDIS_DB
-            value: "0"     
-          livenessProbe:
-            httpGet:
-              path: {{ .Values.livenessProbe.path }}
-              port: {{ .Values.livenessProbe.port }}
-            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            - name: REDIS_HOST
+              value: "{{ .Values.redis.host }}"
+            - name: REDIS_PORT
+              value: "{{ .Values.redis.port | quote }}"
+          ports:
+            - containerPort: 80

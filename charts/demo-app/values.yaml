@@ -2,35 +2,24 @@ replicaCount: 2
 
 image:
   repository: us-east1-docker.pkg.dev/artful-fragment-458014-j4/demo-app/demo-app
+  tag: latest
   pullPolicy: IfNotPresent
-  tag: "latest"
-
-service:
-  type: LoadBalancer
-  port: 80
-  targetPort: 8080
-
-resources: {}
-
-autoscaling:
-  enabled: true
-  minReplicas: 3
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 70
-  targetMemoryUtilizationPercentage: 80
-
-livenessProbe:
-  path: /
-  port: 8080
-  initialDelaySeconds: 10
-  periodSeconds: 10
 
 redis:
-  enabled: true
-  host: "10.170.201.60"   # ← Replace with actual Redis IP from GCP
+  host: 10.170.201.60
   port: 6379
 
-app:
-  environment: "production"
-  host: "0.0.0.0"
-  port: 8080
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: demo-app-devoteam.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
