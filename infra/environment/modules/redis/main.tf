@@ -34,7 +34,6 @@ resource "google_redis_cluster" "redis_cluster" {
   node_type                   = "REDIS_SHARED_CORE_NANO" # change to a higher tier if needed
   transit_encryption_mode     = "TRANSIT_ENCRYPTION_MODE_DISABLED"
   authorization_mode          = "AUTH_MODE_DISABLED"
-  memory_size_gb              = var.memory_size
   deletion_protection_enabled = true
 
   redis_configs = {
