@@ -12,8 +12,8 @@ env:
   WORKLOAD_IDENTITY_PROVIDER: projects/447195453845/locations/global/workloadIdentityPools/github-actions-pool/providers/devoteam-challenge
   SERVICE_ACCOUNT: gke-terraform-service-account@artful-fragment-458014-j4.iam.gserviceaccount.com
   WORKING_DIR: infra/environment
-  CLUSTER_NAME: private-gke-cluster
-  CLUSTER_LOCATION : us-east1
+  CLUSTER_NAME: private-cluster
+  CLUSTER_LOCATION : us-central1
   REPOSITORY: demo-app
   IMAGE: demo-app
   DEPLOYMENT_NAME: demo-app
