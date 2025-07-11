@@ -1,8 +1,8 @@
 # Artifact Registry Repository
 resource "google_artifact_registry_repository" "docker_repo" {
   location      = var.region
-  repository_id = "iti-docker-repo"
-  description   = "Private Docker repository for ITI challenge"
+  repository_id = "demo-app"
+  description   = "Private Docker repository for  challenge"
   format        = "DOCKER"
 
   docker_config {
