@@ -8,6 +8,8 @@ image:
 redis:
   host: "10.9.151.28"
   port: "6379"
+  db: "0"
+  
 
 service:
   type: ClusterIP
