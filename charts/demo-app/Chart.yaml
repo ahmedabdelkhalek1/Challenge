@@ -1,5 +1,6 @@
 apiVersion: v2
 name: demo-app
-description: A Helm chart for deploying demo-app on GKE
+description: A Helm chart for deploying demo-app to GKE
+type: application
 version: 0.1.0
-appVersion: "latest"
+appVersion: "1.0.0"

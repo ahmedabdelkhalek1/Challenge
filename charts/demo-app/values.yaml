@@ -2,56 +2,22 @@ replicaCount: 2
 
 image:
   repository: us-east1-docker.pkg.dev/artful-fragment-458014-j4/demo-app/demo-app
-  tag: latest
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
+  tag: "latest"
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 80
-  targetPort: 8080
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: gce
-    kubernetes.io/ingress.global-static-ip-name: demo-app-ip
-  hosts:
-    - host: ""
-      paths:
-        - path: /
-          pathType: Prefix
-
-resources:
-  limits:
-    cpu: "500m"
-    memory: "512Mi"
-  requests:
-    cpu: "200m"
-    memory: "256Mi"
+resources: {}
 
 livenessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-  initialDelaySeconds: 15
+  path: /
+  port: 80
+  initialDelaySeconds: 10
   periodSeconds: 10
-
-readinessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 5
-
-secret:
-  enabled: true
-  secretName: demo-app-secrets
-  gcpSecretManager:
-    secrets:
-      - secretId: demo-app-secret
-        key: APP_SECRET
 
 redis:
   enabled: true
-  host: "10.170.201.60"
+  host: "10.170.201.60"   # ← Replace with actual Redis IP from GCP
   port: 6379

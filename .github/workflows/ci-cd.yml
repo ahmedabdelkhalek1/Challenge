@@ -236,8 +236,6 @@ jobs:
         run: |
           helm upgrade --install ${{ env.DEPLOYMENT_NAME }}  ./charts/demo-app \
             --namespace production \
-            --set image.repository=${{ env.CLUSTER_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }} \
-            --set image.tag=latest \
             --wait \
             --debug
 
