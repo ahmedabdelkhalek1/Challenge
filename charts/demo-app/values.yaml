@@ -10,14 +10,6 @@ service:
   port: 80
   targetPort: 8080
 
-ingress:
-  enabled: false
-  host: "devops-demo.local"
-  managedCertificate: ""
-  tls:
-    enabled: false
-    secretName: ""
-
 resources: {}
 
 autoscaling:

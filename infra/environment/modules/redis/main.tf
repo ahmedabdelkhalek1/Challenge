@@ -55,9 +55,9 @@ resource "google_redis_cluster" "redis_cluster" {
 
 # Outputs
 output "redis_cluster_host" {
-  value = google_redis_cluster.redis_cluster.host
+  value = google_redis_cluster.redis_cluster.nodes[0].ip
 }
 
 output "redis_cluster_port" {
-  value = google_redis_cluster.redis_cluster.port
+  value = 6379
 }
