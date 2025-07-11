@@ -11,7 +11,7 @@ service:
   targetPort: 8080
 
 ingress:
-  enabled: true
+  enabled: false
   host: "devops-demo.local"
   managedCertificate: ""
   tls:
