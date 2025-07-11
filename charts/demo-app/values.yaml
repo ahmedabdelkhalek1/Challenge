@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 redis:
-  host: 10.170.201.60
+  host: 10.9.151.28
   port: 6379
 
 service:
