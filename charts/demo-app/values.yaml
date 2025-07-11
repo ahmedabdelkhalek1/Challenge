@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: us-east1-docker.pkg.dev/artful-fragment-458014-j4/demo-app/demo-app
+  repository: us-central1-docker.pkg.dev/artful-fragment-458014-j4/demo-app/demo-app
   tag: latest
   pullPolicy: IfNotPresent
 
