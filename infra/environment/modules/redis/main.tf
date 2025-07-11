@@ -14,11 +14,11 @@ resource "google_compute_subnetwork" "consumer_subnet" {
 
 # PSC Service Connection Policy for Memorystore
 resource "google_network_connectivity_service_connection_policy" "default" {
-  name           = "my-policy"
-  location       = var.region
-  service_class  = "gcp-memorystore-redis"
-  description    = "my basic service connection policy"
-  network        = google_compute_network.consumer_net.id
+  name          = "my-policy"
+  location      = var.region
+  service_class = "gcp-memorystore-redis"
+  description   = "my basic service connection policy"
+  network       = google_compute_network.consumer_net.id
 
   psc_config {
     subnetworks = [google_compute_subnetwork.consumer_subnet.id]
@@ -27,14 +27,14 @@ resource "google_network_connectivity_service_connection_policy" "default" {
 
 # Redis Cluster Resource
 resource "google_redis_cluster" "redis_cluster" {
-  name                    = "ha-cluster"
-  region                  = var.region
-  shard_count             = 3
-  replica_count           = 1
-  node_type               = "REDIS_SHARED_CORE_NANO" # change to a higher tier if needed
-  transit_encryption_mode = "TRANSIT_ENCRYPTION_MODE_DISABLED"
-  authorization_mode      = "AUTH_MODE_DISABLED"
-  memory_size_gb          = var.memory_size
+  name                        = "ha-cluster"
+  region                      = var.region
+  shard_count                 = 3
+  replica_count               = 1
+  node_type                   = "REDIS_SHARED_CORE_NANO" # change to a higher tier if needed
+  transit_encryption_mode     = "TRANSIT_ENCRYPTION_MODE_DISABLED"
+  authorization_mode          = "AUTH_MODE_DISABLED"
+  memory_size_gb              = var.memory_size
   deletion_protection_enabled = true
 
   redis_configs = {
