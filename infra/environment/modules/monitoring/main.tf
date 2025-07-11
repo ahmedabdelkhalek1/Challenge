@@ -11,23 +11,5 @@ resource "google_compute_health_check" "app_health_check" {
   }
 }
 
-resource "google_monitoring_alert_policy" "app_unavailable_alert" {
-  display_name = "App Unavailable Alert"
-  combiner     = "OR"
 
-  conditions {
-    display_name = "App Health Check Failed"
-    condition_threshold {
-      filter          = "metric.type=\"loadbalancing.googleapis.com/backend_latencies\" resource.type=\"http_load_balancer_backend\""
-      duration        = "60s"
-      comparison      = "COMPARISON_GT"
-      threshold_value = 0
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_RATE"
-      }
-    }
-  }
-
-  notification_channels = [] # Add notification channel IDs here
 }
