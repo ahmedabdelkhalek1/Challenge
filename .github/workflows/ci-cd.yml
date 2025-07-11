@@ -190,7 +190,8 @@ jobs:
 
   deploy-applications:
     needs: build-and-push
-    runs-on: ubuntu-latest
+    runs-on: 
+      - self-hosted
     #environment: production  # Add environment for approval
     if: github.ref == 'refs/heads/main'
     steps:

@@ -50,6 +50,14 @@ resource "google_compute_instance" "management_vm" {
     
     # Install kubectl gke-gcloud-auth-plugin
     gcloud components install gke-gcloud-auth-plugin
+
+    sudo apt-get update
+    sudo apt-get install apt-transport-https ca-certificates gnupg curl -y
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+    sudo apt-get update
+    sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin -y
+
   EOT
 
 } 
