@@ -12,4 +12,4 @@ resource "google_compute_health_check" "app_health_check" {
 }
 
 
-}
+
