@@ -220,17 +220,6 @@ jobs:
         run: |
           kubectl create namespace production --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Deploy Redis
-        run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo update
-          helm upgrade --install redis bitnami/redis \
-            --namespace production \
-            --set auth.enabled=false \
-            --set architecture=standalone \
-            --set master.persistence.enabled=false \
-            --wait
-
       - name: Deploy application with Helm
         # Remove working-directory to run from repo root
         run: |
