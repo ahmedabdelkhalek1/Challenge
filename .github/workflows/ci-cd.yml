@@ -211,7 +211,8 @@ jobs:
           project_id:   ${{ env.PROJECT_ID }}
           cluster_name: ${{ env.CLUSTER_NAME }}
           location:     ${{ env.CLUSTER_LOCATION }}
-  
+      - name: Install unzip
+        run: sudo apt-get update && sudo apt-get install -y unzip
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
