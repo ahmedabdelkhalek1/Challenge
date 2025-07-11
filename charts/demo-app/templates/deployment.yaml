@@ -18,10 +18,14 @@ spec:
           ports:
             - containerPort: {{ .Values.service.port }}
           env:
+          - name: PORT
+            value: "8080"
           - name: REDIS_HOST
             value: {{ .Values.redis.host | default "\"10.170.201.60\"" }}
           - name: REDIS_PORT
-            value: {{ .Values.redis.port | default 6379 | quote }}       
+            value: {{ .Values.redis.port | default 6379 | quote }}   
+          - name: REDIS_DB
+            value: "0"     
           livenessProbe:
             httpGet:
               path: {{ .Values.livenessProbe.path }}
