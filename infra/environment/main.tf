@@ -39,8 +39,8 @@ module "redis" {
   memory_size = 1
 }
 
-resource "google_compute_global_address" "lb_ip" {
-  name = "demo-app-lb-ip"
+module "monitoring" {
+  source  = "./modules/monitoring"
+  project = var.project_id
+  region  = var.region
 }
-
-# Optional Secret Manager if secrets are needed
