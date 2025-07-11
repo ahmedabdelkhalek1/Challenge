@@ -6,8 +6,8 @@ image:
   pullPolicy: IfNotPresent
 
 redis:
-  host: 10.9.151.28
-  port: 6379
+  host: "10.9.151.28"
+  port: "6379"
 
 service:
   type: ClusterIP
