@@ -91,11 +91,11 @@ module "gke" {
 }
 
 module "redis" {
-  source               = "./modules/redis"
-  project              = var.project_id
-  region               = var.region
-  memory_size          = 1
-  network_id           = module.network.network_id
-  management_subnet_id = module.network.management_subnet_id
+  source                 = "./modules/redis"
+  project                = var.project_id
+  region                 = var.region
+  memory_size            = 1
+  network_id             = module.network.network_id
+  management_subnet_id   = module.network.management_subnet_id
   management_subnet_name = [module.network.management_subnet_name]
 }
