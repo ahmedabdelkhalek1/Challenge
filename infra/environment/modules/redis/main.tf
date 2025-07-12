@@ -1,16 +1,23 @@
-
-resource "google_redis_instance" "redis" {
-  name               = "demo-redis"
-  tier               = "STANDARD_HA"
-  memory_size_gb     = var.memory_size
-  region             = var.region
-  authorized_network = "projects/${var.project}/global/networks/custom-vpc"
+resource "google_redis_cluster" "cluster-ha" {
+  name        = var.name
+  shard_count = var.shard_count
+  psc_configs {
+    network = var.network_id
+  }
+  region        = var.region
+  replica_count = var.replica_count
+  depends_on = [
+    google_network_connectivity_service_connection_policy.default
+  ]
 }
 
-output "redis_host" {
-  value = google_redis_instance.redis.host
-}
-
-output "redis_port" {
-  value = google_redis_instance.redis.port
+resource "google_network_connectivity_service_connection_policy" "default" {
+  name          = "${var.name}-redis-cluster-connect"
+  location      = var.region
+  service_class = "gcp-memorystore-redis"
+  description   = "Redis service connection policy"
+  network       = var.network_id
+  psc_config {
+    subnetworks = var.management_subnet_name
+  }
 }
