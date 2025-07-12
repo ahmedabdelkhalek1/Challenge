@@ -1,5 +1,4 @@
 variable "project" {}
-variable "region" {}
 variable "memory_size" { default = 1 }
 variable "name" {
   description = "Name of the Redis cluster"
@@ -25,7 +24,7 @@ variable "replica_count" {
   default     = 1
 }
 
-variable "network" {
+variable "network_id" {
   description = "VPC network ID"
   type        = string
 }
