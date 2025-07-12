@@ -92,4 +92,9 @@ variable "node_count" {
   description = "Number of nodes in the GKE cluster"
   type        = number
   default     = 2
-} 
+}
+
+output "redis_discovery_address" {
+  description = "Network address of the exposed Redis discovery endpoint"
+  value       = google_redis_cluster.cluster-ha.discovery_endpoints[0].address
+}
