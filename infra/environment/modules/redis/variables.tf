@@ -31,5 +31,5 @@ variable "network_id" {
 
 variable "management_subnet_id" {
   description = "List of subnetworks for PSC config"
-  type        = list(string)
+  type        = string
 }
