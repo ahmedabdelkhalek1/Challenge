@@ -42,3 +42,13 @@ output "gke_service_account_email" {
   description = "Email of the GKE service account"
   value       = module.iam.gke_service_account_email
 }
+
+output "redis_discovery_address" {
+  description = "Network address of the exposed Redis discovery endpoint"
+  value       = module.redis.redis_discovery_address
+}
+
+output "redis_discovery_port" {
+  description = "Port number of the exposed Redis discovery endpoint"
+  value       = module.redis.redis_discovery_port
+}
