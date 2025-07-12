@@ -1,3 +1,4 @@
+{{- if .Values.autoscaling.enabled }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -8,22 +9,20 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "python-app.fullname" . }}
-  minReplicas: {{ .Values.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  minReplicas: {{ default 1 .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ default 5 .Values.autoscaling.maxReplicas }}
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+        averageUtilization: {{ default 80 .Values.autoscaling.targetCPUUtilizationPercentage }}
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 300
     scaleUp:
       stabilizationWindowSeconds: 0
----
-{{- if .Values.autoscaling.enabled }}
 {{- else }}
 # HPA disabled
 {{- end }}
