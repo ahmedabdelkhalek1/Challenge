@@ -241,6 +241,24 @@ The demo application is a cloud-native microservice featuring:
 - Horizontal Pod Autoscaler (HPA)
 
 ## 🔄 CI/CD Pipeline
+## CI/CD Pipeline Flow Chart
+
+```mermaid
+graph TD
+    A[Push to Repository] --> B[authenticate]
+    B --> C[terraform-checks]
+    C -->|Push to main| D[deploy-infrastructure]
+    C -->|Pull Request| E[Preview terraform plan]
+    D --> F[test-apps]
+    F --> G[preview-deployment]
+    G -->|Push to main| H[deploy-applications]
+    I[Manual trigger] --> J[destroy]
+    K[Branch deletion] --> J
+    
+    style D fill:#9cf,stroke:#333
+    style H fill:#9cf,stroke:#333
+    style J fill:#fcb,stroke:#333
+```
 
 ### GitHub Actions Workflow (`.github/workflows/`)
 
