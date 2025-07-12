@@ -7,10 +7,10 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_ID: artful-fragment-458014-j4
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: us-central1
-  WORKLOAD_IDENTITY_PROVIDER: projects/447195453845/locations/global/workloadIdentityPools/github-actions-pool/providers/devoteam-challenge
-  SERVICE_ACCOUNT: gke-terraform-service-account@artful-fragment-458014-j4.iam.gserviceaccount.com
+  WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+  SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
   WORKING_DIR: infra/environment
   CLUSTER_NAME: private-cluster
   CLUSTER_LOCATION : us-central1-a
