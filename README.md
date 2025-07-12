@@ -396,12 +396,37 @@ curl http://localhost:8080/health
    # Port forward for local testing
    kubectl port-forward service/demo-app 8080:80
    ```
+## 🧹 Infrastructure Management
+
+### Terraform State Management
+
+#### Unlock Terraform State
+If Terraform state becomes locked due to interrupted operations:
+
+**⚠️ Warning**: The destroy operation will:
+- Delete all infrastructure resources
+- Remove all data (Redis, application state)
+- Cannot be undone
+
+### Operational Workflows
+
+#### Terraform Destroy Workflow
+- **Trigger**: Manual dispatch from GitHub Actions
+- **Purpose**: Complete infrastructure cleanup
+- **Safety**: Requires manual confirmation
+- **Scope**: Destroys all Terraform-managed resources
+
+#### Terraform Unlock Workflow  
+- **Trigger**: Manual dispatch from GitHub Actions
+- **Purpose**: Release stuck Terraform state locks
+- **Use Case**: When Terraform operations are interrupted
+- **Safety**: Includes validation before unlock
 
 ## 📞 Support
 
 For questions or issues:
 - Open an issue in this repository
-- Contact: ahmed.abdelkhalek@example.com
+- Contact: ahmed.abdelkhalek
 - LinkedIn: [Ahmed Abdelkhalek](https://linkedin.com/in/ahmedabdelkhalek1)
 
 ---
