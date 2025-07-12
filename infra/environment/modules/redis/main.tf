@@ -11,4 +11,5 @@ resource "google_redis_cluster" "cluster-ha" {
 }
 
 
+discovery_endpoints 
 

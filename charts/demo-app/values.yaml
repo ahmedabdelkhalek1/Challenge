@@ -22,7 +22,7 @@ app:
 
 # Redis configuration
 redis:
-  host: "10.78.36.252"
+  host: "10.0.1.7"
   port: 6379
   db: 0
 
