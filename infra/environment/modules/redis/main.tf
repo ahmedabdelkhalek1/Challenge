@@ -5,7 +5,6 @@ resource "google_redis_instance" "redis" {
   memory_size_gb     = var.memory_size
   region             = var.region
   authorized_network = "projects/${var.project}/global/networks/custom-vpc"
-  reserved_ip_range  = "10.1.0.0/29"
 }
 
 output "redis_host" {
