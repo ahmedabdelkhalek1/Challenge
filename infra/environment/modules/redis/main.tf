@@ -7,7 +7,7 @@ resource "google_redis_cluster" "cluster-ha" {
   region        = var.region
   replica_count = var.replica_count
 
-  
+
 }
 
 
