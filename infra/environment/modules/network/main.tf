@@ -38,6 +38,12 @@ resource "google_compute_subnetwork" "restricted" {
   }
 }
 
+resource "google_service_networking_connection" "private_service_access" {
+  network                 = google_compute_network.vpc.id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = ["redis-range"]
+}
+
 # Cloud Router for NAT
 resource "google_compute_router" "router" {
   name    = "${var.network_name}-router"
