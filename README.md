@@ -1,4 +1,6 @@
 
+## application loadbalancer http://34.117.43.24/
+please vist it to test funcionality 
 # GCP DevOps Challenge - Infrastructure and Application Deployment
 ## Architecture Diagram
 ![GKE Cluster](/images/private%20gke%20cluster.jpg)
