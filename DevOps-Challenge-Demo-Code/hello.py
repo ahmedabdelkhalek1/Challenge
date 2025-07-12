@@ -1,4 +1,4 @@
-import redis
+from redis.cluster import RedisCluster
 from redis.exceptions import ConnectionError
 import tornado.ioloop
 import tornado.web
@@ -7,14 +7,20 @@ import os
 from sys import exit
 
 try:
-    r = redis.Redis(
-        host=os.getenv("REDIS_HOST"),
-        port=int(os.getenv("REDIS_PORT")),
-        db=int(os.getenv("REDIS_DB")),
+    startup_nodes = [
+        {"host": os.getenv("REDIS_HOST"), "port": int(os.getenv("REDIS_PORT"))}
+    ]
+
+    r = RedisCluster(
+        startup_nodes=startup_nodes,
+        decode_responses=True
     )
+
+    # Cluster-aware clients auto-select the right slot for keys
     r.set("counter", 0)
-except ConnectionError:
-    print("Redis server isn't running. Exiting...")
+
+except ConnectionError as e:
+    print(f"Redis connection failed: {e}")
     exit()
 
 environment = os.getenv("ENVIRONMENT")
