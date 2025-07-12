@@ -97,5 +97,4 @@ module "redis" {
   memory_size            = 1
   network_id             = module.network.network_id
   management_subnet_id   = module.network.management_subnet_id
-  management_subnet_name = [module.network.management_subnet_name]
 }
