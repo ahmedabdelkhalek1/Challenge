@@ -29,7 +29,7 @@ variable "network_id" {
   type        = string
 }
 
-variable "management_subnet_name" {
+variable "management_subnet_id" {
   description = "List of subnetworks for PSC config"
   type        = list(string)
 }

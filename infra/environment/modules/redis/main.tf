@@ -18,6 +18,6 @@ resource "google_network_connectivity_service_connection_policy" "default" {
   description   = "Redis service connection policy"
   network       = var.network_id
   psc_config {
-    subnetworks = var.management_subnet_name
+    subnetworks = var.management_subnet_id
   }
 }
