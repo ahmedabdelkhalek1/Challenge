@@ -107,6 +107,8 @@ gcloud iam service-accounts create ${SERVICE_ACCOUNT_NAME} \
     --role="roles/iam.serviceAccountUser"
     --role="roles/storage.admin"
     --role="roles/compute.admin"
+    --role="compute.network.admin"
+    --role="artifactregistry.googleapis.com"
 ```
 # 6. Allow the GitHub Actions workflow to impersonate the Service Account
 ```
@@ -193,9 +195,10 @@ git push origin main
 ## 🏛️ Infrastructure Modules
 
 ### Network Module (`terraform/modules/network/`)
-- Custom VPC with public and private subnets
+- Custom VPC with private subnets
 - Cloud NAT for internet access from private resources
 - Firewall rules for security
+- Security policies and firewall rules
 - Secondary IP ranges for GKE pods and services
 
 ### GKE Module (`terraform/modules/gke/`)
@@ -204,7 +207,7 @@ git push origin main
 - Network policies for pod security
 - Workload Identity enabled
 
-### Bastion Module (`terraform/modules/bastion/`)
+### Bastion Module (`terraform/modules/compute/`)
 - Secure bastion host for cluster access
 - Pre-configured with necessary tools
 - IAP tunnel access for enhanced security
@@ -212,12 +215,16 @@ git push origin main
 ### Redis Module (`terraform/modules/redis/`)
 - High-availability Redis instance (Memorystore)
 - Private IP configuration
-- Automated backups and monitoring
 
-### Security Module (`terraform/modules/security/`)
-- Custom service accounts
-- IAM roles and permissions
-- Security policies and firewall rules
+### Artifact Registry Module (`terraform/modules/artifact-registry/`)
+- Creates a regional Artifact Registry repository (Docker or other formats)
+- Supports multiple repositories for dev, staging, and prod environments
+
+### IAM Module (`terraform/modules/iam/`)
+- Centralized IAM bindings management (project-level and service-specific roles)
+- Supports custom roles and predefined role assignments
+- Handles Workload Identity bindings 
+- Follows least privilege principle across resources
 
 ## 🐳 Application Details
 
@@ -227,16 +234,14 @@ The demo application is a cloud-native microservice featuring:
 - **Framework**: Flask/Express or similar
 - **Database**: Redis for caching and session storage
 - **Monitoring**: Health checks and metrics endpoints
-- **Containerization**: Multi-stage Docker build
+- **Containerization**:  Docker build
 
 ### Application Features
 - Health and readiness probes
-- Structured logging
-- Metrics collection
 - Configuration via environment variables
 
 ### Helm Chart (`helm/demo-app/`)
-- Kubernetes deployment manifests
+- Kubernetes deployment 
 - Service and ingress configurations
 - Horizontal Pod Autoscaler (HPA)
 
@@ -291,8 +296,6 @@ The pipeline includes:
 ### Monitoring Stack
 - **Google Cloud Monitoring** for infrastructure metrics
 - **Google Cloud Logging** for centralized log management
-- **Kubernetes metrics** via GKE monitoring
-- **Application metrics** via custom endpoints
 
 ### Alerting
 - Resource utilization alerts
@@ -314,11 +317,6 @@ The pipeline includes:
 - IAM roles and policies following least privilege
 - Secure secrets management
 
-### Container Security
-- Multi-stage Docker builds for minimal attack surface
-- Regular base image updates
-- Container image scanning
-- Runtime security policies
 
 ```
 
